@@ -1,17 +1,14 @@
-FROM haskell:latest
+FROM haskell:8
 
-# Install stack
-RUN curl -sSL https://get.haskellstack.org/ | sh
+# Install curl and certificates if needed
+RUN apt-get update && apt-get install -y curl ca-certificates
 
 WORKDIR /app
 COPY . /app
 
-# Build Duckling
-RUN stack setup
-RUN stack build
+# Install Stack
+RUN curl -sSL https://get.haskellstack.org/ | sh
 
-# Expose the port Duckling runs on
+RUN stack setup && stack build
 EXPOSE 8000
-
-# Run the Duckling example server on port 8000
 CMD ["stack", "exec", "duckling-example-exe", "--", "--port", "8000"]
